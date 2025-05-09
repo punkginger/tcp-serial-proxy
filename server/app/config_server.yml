@@ -1,0 +1,8 @@
+mysql:
+  uri:  # eg: mysql+pymysql://uname:password@localhost/dbname
+  track_modifications: false
+
+jwt_secret_key:
+tcp:
+  port: # 运行tcp透传服务的端口
+  timeout_seconds: # 超时踢出客户端时限

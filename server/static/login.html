@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+    input, button { display: block; margin: 1em 0; padding: 0.5em; width: 200px; }
+  </style>
+</head>
+<body>
+<!--  <h2>Login</h2>-->
+<!--  <input type="text" id="username" placeholder="Username" />-->
+<!--  <input type="password" id="password" placeholder="Password" />-->
+<!--  <button id="loginBtn">Login</button>-->
+<!--  <div id="message"></div>-->
+
+  <div class="container">
+    <h2>登录</h2>
+    <input type="text" id="username" placeholder="用户名" />
+    <input type="password" id="password" placeholder="密码" />
+    <button id="loginBtn">登录</button>
+    <div id="message"></div>
+    <a href="/static/register.html">注册一个账户</a>
+  </div>
+
+  <style>
+    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .container { text-align: center; }
+    input, button { display: block; margin: 1em auto; padding: 0.5em; width: 200px; }
+  </style>
+
+  <script>
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password})
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token', data.access_token);
+
+
+        await fetch('/api/tcp/start', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + data.access_token }
+        });
+
+        window.location.href = '/static/dashboard.html';
+      } else {
+        document.getElementById('message').textContent = data.message || '登陆失败';
+      }
+    });
+  </script>
+</body>
+</html>

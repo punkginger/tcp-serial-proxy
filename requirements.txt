@@ -1,0 +1,7 @@
+flask
+flask_sqlalchemy
+flask_jwt_extended
+pymysql
+werkzeug
+pyserial
+pyyaml

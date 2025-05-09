@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+    button { margin: 1em 0; padding: 0.5em; }
+    pre { background: #f4f4f4; padding: 1em; border: 1px solid #ccc; }
+    .spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #ccc;
+        border-top: 2px solid #333;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        vertical-align: middle;
+        margin-left: 8px;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .container { text-align: center; max-width: 600px; }
+    button { margin: 1em 0; padding: 0.5em 1em; }
+    #statusBox { text-align: left; margin-top: 1em; background: #f4f4f4; padding: 1em; border-radius: 8px; }
+    ul { list-style-type: disc; padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>透传信息查询</h2>
+    <button id="checkStatusBtn">手动刷新透传信息</button>
+    <button onclick="resetStatus()" style="margin-top: 10px;">清空并刷新日志</button>
+    <div id="statusBox">
+      <p><strong>状态:</strong> <span id="status">-</span></p>
+      <p><strong>记录数:</strong> <span id="logCount">-</span></p>
+      <div>
+        <strong>透传信息:</strong>
+        <span class="spinner" id="spinner"></span>
+        <span id="logStatusMessage" style="margin-left: 8px; color: #555;"></span>
+        <ul id="logList"></ul>
+      </div>
+    </div>
+  </div>
+
+<script>
+  async function fetchStatus() {
+    const token = localStorage.getItem('token');
+    const res = await fetch('/api/tcp/status', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      document.getElementById('status').textContent = data.running ? '传输中' : '暂停';
+      document.getElementById('logCount').textContent = data.logs.length;
+
+      const list = document.getElementById('logList');
+      list.innerHTML = '';
+      data.logs.forEach(log => {
+        const li = document.createElement('li');
+        li.textContent = log;
+        list.appendChild(li);
+      });
+    } else {
+      document.getElementById('statusBox').textContent = '获取内容失败';
+    }
+  }
+
+  // 按钮点击仍然可以手动刷新
+  document.getElementById('checkStatusBtn').addEventListener('click', fetchStatus);
+
+  // 自动每5秒刷新一次
+  window.onload = () => {
+    fetchStatus(); // 初始加载时执行一次
+    setInterval(fetchStatus, 5000); // 每5秒刷新一次
+  };
+
+  async function resetStatus() {
+    const token = localStorage.getItem('token');
+
+    // 清空显示区域
+    document.getElementById("logList").innerHTML = '';
+    document.getElementById("logCount").textContent = '0';
+    document.getElementById("logStatusMessage").textContent = "⏳ 清空中...";
+
+    try {
+      const res = await fetch('/api/clear_logs', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+
+      if (res.ok) {
+        // 清空成功后再刷新
+        document.getElementById("logStatusMessage").textContent = "✅ 已清空，加载中...";
+        await fetchStatus();
+        document.getElementById("logStatusMessage").textContent = "";
+      } else {
+        document.getElementById("logStatusMessage").textContent = "❌ 清空失败";
+      }
+
+    } catch (err) {
+      document.getElementById("logStatusMessage").textContent = "❌ 网络错误";
+    }
+  }
+
+</script>
+
+</body>
+
+</html>

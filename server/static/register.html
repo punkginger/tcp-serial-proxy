@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register</title>
+  <style>
+    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .container { text-align: center; }
+    input, button { display: block; margin: 1em auto; padding: 0.5em; width: 200px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>注册</h2>
+    <input type="text" id="username" placeholder="用户名" />
+    <input type="password" id="password" placeholder="密码" />
+    <button id="registerBtn">注册</button>
+    <div id="message"></div>
+    <a href="/static/login.html">已有账户</a>
+  </div>
+
+  <script>
+    document.getElementById('registerBtn').addEventListener('click', async () => {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password})
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('message').textContent = '注册成功！请登录';
+        setTimeout(() => window.location.href = '/static/login.html', 1500);
+      } else {
+        document.getElementById('message').textContent = data.message || '注册失败！';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+device:
+  device_id: ""
+  target_id: ""
+
+serial:
+  com_port: ""
+  baudrate:
+
+server:
+  ip: ""
+  port:
