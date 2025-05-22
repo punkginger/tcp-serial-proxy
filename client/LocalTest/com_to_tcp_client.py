@@ -6,7 +6,7 @@ import threading
 import yaml
 
 # 读取config
-with open("../config_sender.yml", "r") as f:
+with open("./config_sender.yml", "r") as f:
     cfg = yaml.safe_load(f)
 
 DEVICE_ID = cfg["device"]["device_id"]

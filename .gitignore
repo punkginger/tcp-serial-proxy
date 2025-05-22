@@ -1,0 +1,17 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# .idea directory for JetBrains IDEs (e.g., PyCharm)
+.idea/
+
+# VS Code settings
+.vscode/
+
+# Logs and database files
+*.log
+*.sqlite3
+
+# Other common unwanted files
+*.bak
+*.swp

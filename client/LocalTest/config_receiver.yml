@@ -1,11 +1,11 @@
 device:
-  device_id: ""
-  target_id: ""
+  device_id: "device2"
+  target_id: "device1"
 
 serial:
-  com_port: ""
-  baudrate:
+  com_port: "com3"
+  baudrate: 9600
 
 server:
-  ip: ""
-  port:
+  ip: "127.0.0.1"
+  port: 6006

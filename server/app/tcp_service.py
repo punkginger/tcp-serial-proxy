@@ -46,7 +46,6 @@ class TCPServerThread(threading.Thread):
     def handle_client(self, conn, addr):
         device_id = None
         conn.settimeout(TIMEOUT_SECONDS)  # 设置空闲超时
-
         try:
             while True:
                 try:
@@ -58,18 +57,8 @@ class TCPServerThread(threading.Thread):
                     logger.warning("连接超时断开：%s", addr)
                     log_runtime('warning', f"连接超时断开：{addr}")
                     break
-
                 try:
                     msg = json.loads(raw.decode())
-
-                    # "type": "data",
-                    # "from": DEVICE_ID,
-                    # "to": TARGET_ID,
-                    # "payload": text
-
-                    # "type": "register",
-                    # "device_id": DEVICE_ID
-
                     if msg['type'] == 'register':
                         device_id = msg['device_id']
                         clients[device_id] = conn
